@@ -16,9 +16,9 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-#db_drop_and_create_all()
+# db_drop_and_create_all()
 
-## ROUTES
+# ROUTES
 '''
 @DONE implement endpoint
     GET /drinks
@@ -27,6 +27,7 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+
 
 @app.route('/drinks')
 def get_drinks():
@@ -37,8 +38,9 @@ def get_drinks():
             'success': True,
             'drinks': [drink.short() for drink in drinks]
         })
-    except:
+    except BaseException:
         abort(404)
+
 
 '''
 
@@ -50,6 +52,7 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 
+
 @app.route("/drinks-detail")
 @requires_auth('get:drinks-detail')
 def get_drink_detail(jwt):
@@ -60,8 +63,9 @@ def get_drink_detail(jwt):
             'success': True,
             'drinks': [drink.long() for drink in drinks]
         })
-    except:
+    except BaseException:
         abort(404)
+
 
 '''
 
@@ -73,6 +77,7 @@ def get_drink_detail(jwt):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+
 
 @app.route("/drinks", methods=['POST'])
 @requires_auth('post:drinks')
@@ -95,7 +100,7 @@ def add_drink(jwt):
             'drinks': [drink.long()],
         })
 
-    except:
+    except BaseException:
         abort(422)
 
 
@@ -111,6 +116,7 @@ def add_drink(jwt):
         or appropriate status code indicating reason for failure
 '''
 
+
 @app.route("/drinks/<id>", methods=['PATCH'])
 @requires_auth('patch:drinks')
 def update_drink(jwt, id):
@@ -122,7 +128,7 @@ def update_drink(jwt, id):
             body = request.get_json()
             title = body.get('title')
             recipe = json.dumps(body.get('recipe'))
-            
+
             if title:
                 drink.title = title
             if recipe:
@@ -134,7 +140,7 @@ def update_drink(jwt, id):
                 'success': True,
                 'drinks': [drink.long()]
             })
-        except:
+        except BaseException:
             abort(422)
     else:
         abort(404)
@@ -151,6 +157,7 @@ def update_drink(jwt, id):
         or appropriate status code indicating reason for failure
 '''
 
+
 @app.route("/drinks/<id>", methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drink(jwt, id):
@@ -164,28 +171,30 @@ def delete_drink(jwt, id):
                 'success': True,
                 'delete': id
             })
-        except:
+        except BaseException:
             abort(422)
     else:
         abort(404)
 
-## Error Handling
+
+# Error Handling
 '''
 Example error handling for unprocessable entity
 '''
 @app.errorhandler(422)
 def unprocessable(error):
     return jsonify({
-                    "success": False, 
-                    "error": 422,
-                    "message": "unprocessable"
-                    }), 422
+        "success": False,
+        "error": 422,
+        "message": "unprocessable"
+    }), 422
+
 
 '''
 @DONE implement error handlers using the @app.errorhandler(error) decorator
     each error handler should return (with approprate messages):
              jsonify({
-                    "success": False, 
+                    "success": False,
                     "error": 404,
                     "message": "resource not found"
                     }), 404
@@ -194,8 +203,9 @@ def unprocessable(error):
 
 '''
 @DONE implement error handler for 404
-    error handler should conform to general task above 
+    error handler should conform to general task above
 '''
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -205,10 +215,12 @@ def not_found(error):
         "message": "resource not found"
     }), 40
 
+
 '''
 @DONE implement error handler for AuthError
-    error handler should conform to general task above 
+    error handler should conform to general task above
 '''
+
 
 @app.errorhandler(AuthError)
 def handle_auth_error(ex):
