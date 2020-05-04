@@ -100,7 +100,7 @@ def add_drink(jwt):
 
 
 '''
-@TODO implement endpoint
+@DONE implement endpoint
     PATCH /drinks/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
@@ -151,6 +151,23 @@ def update_drink(jwt, id):
         or appropriate status code indicating reason for failure
 '''
 
+@app.route("/drinks/<id>", methods=['DELETE'])
+@requires_auth('delete:drinks')
+def delete_drink(jwt, id):
+
+    drink = Drink.query.get(id)
+
+    if drink:
+        try:
+            drink.delete()
+            return jsonify({
+                'success': True,
+                'delete': id
+            })
+        except:
+            abort(422)
+    else:
+        abort(404)
 
 ## Error Handling
 '''
@@ -165,7 +182,7 @@ def unprocessable(error):
                     }), 422
 
 '''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
+@DONE implement error handlers using the @app.errorhandler(error) decorator
     each error handler should return (with approprate messages):
              jsonify({
                     "success": False, 
@@ -174,20 +191,29 @@ def unprocessable(error):
                     }), 404
 
 '''
+
+'''
+@DONE implement error handler for 404
+    error handler should conform to general task above 
+'''
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
         "success": False,
         "error": 404,
         "message": "resource not found"
-    }), 404
-'''
-@TODO implement error handler for 404
-    error handler should conform to general task above 
-'''
-
+    }), 40
 
 '''
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
+
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    return jsonify({
+        "success": False,
+        "error": ex.status_code,
+        'message': ex.error
+    }), 401
