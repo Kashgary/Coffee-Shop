@@ -141,7 +141,7 @@ def update_drink(jwt, id):
 
 
 '''
-@TODO implement endpoint
+@DONE implement endpoint
     DELETE /drinks/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
@@ -206,7 +206,7 @@ def not_found(error):
     }), 40
 
 '''
-@TODO implement error handler for AuthError
+@DONE implement error handler for AuthError
     error handler should conform to general task above 
 '''
 
